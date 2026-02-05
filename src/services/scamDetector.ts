@@ -1,12 +1,12 @@
-import { GeminiService } from './geminiService.js';
+import { GroqService } from './groqService.js';
 import { ScamDetectionResult, ConversationMessage } from '../types/index.js';
 import { logger } from '../utils/logger.js';
 
 export class ScamDetector {
-    private geminiService: GeminiService;
+    private groqService: GroqService;
 
     constructor() {
-        this.geminiService = new GeminiService();
+        this.groqService = new GroqService();
     }
 
     async detectScam(
@@ -72,7 +72,7 @@ RESPOND ONLY IN THIS EXACT JSON FORMAT (no markdown, no code blocks, no explanat
 }`;
 
         try {
-            const response = await this.geminiService.sendSimpleMessage(
+            const response = await this.groqService.sendSimpleMessage(
                 `${detectionPrompt}\n\nAnalyze this message: "${message}"`
             );
 
@@ -86,7 +86,7 @@ RESPOND ONLY IN THIS EXACT JSON FORMAT (no markdown, no code blocks, no explanat
             const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
             if (!jsonMatch) {
                 logger.warn('Could not parse scam detection response', { response });
-                throw new Error('Invalid JSON response from Gemini');
+                throw new Error('Invalid JSON response from Groq');
             }
 
             const result = JSON.parse(jsonMatch[0]);

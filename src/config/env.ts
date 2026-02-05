@@ -6,6 +6,8 @@ export const config = {
     port: parseInt(process.env.PORT || '3000', 10),
     nodeEnv: process.env.NODE_ENV || 'development',
     apiKey: process.env.API_KEY || 'your-secure-api-key-change-this',
+    groqApiKey: process.env.GROQ_API_KEY || '',
+    // Keep geminiApiKey for backward compatibility
     geminiApiKey: process.env.GEMINI_API_KEY || '',
     conversationTTL: parseInt(process.env.CONVERSATION_TTL || '3600', 10),
     maxConversationTurns: parseInt(process.env.MAX_CONVERSATION_TURNS || '15', 10),
@@ -17,8 +19,8 @@ export const config = {
 
 // Validate required configuration
 export function validateConfig(): void {
-    if (!config.geminiApiKey || config.geminiApiKey === 'your-gemini-api-key-here') {
-        console.warn('⚠️  Warning: GEMINI_API_KEY is not set. AI API calls will fail.');
+    if (!config.groqApiKey) {
+        console.warn('⚠️  Warning: GROQ_API_KEY is not set. AI API calls will fail.');
     }
 
     if (config.apiKey === 'your-secure-api-key-change-this') {

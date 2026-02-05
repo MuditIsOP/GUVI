@@ -1,12 +1,12 @@
-import { GeminiService, ChatMessage } from './geminiService.js';
+import { GroqService, ChatMessage } from './groqService.js';
 import { ConversationMessage } from '../types/index.js';
 import { logger } from '../utils/logger.js';
 
 export class AgentEngine {
-    private geminiService: GeminiService;
+    private groqService: GroqService;
 
     constructor() {
-        this.geminiService = new GeminiService();
+        this.groqService = new GroqService();
     }
 
     async generateResponse(
@@ -48,13 +48,13 @@ Generate a natural, believable response that:
 RESPOND ONLY WITH THE MESSAGE TEXT - no labels, no JSON, no markdown, no explanations.`;
 
         try {
-            // Format history for Gemini
+            // Format history for Groq (OpenAI-compatible format)
             const formattedHistory: ChatMessage[] = conversationHistory.map(msg => ({
-                role: msg.role === 'agent' ? 'model' : 'user',
-                parts: [{ text: msg.content }]
+                role: msg.role === 'agent' ? 'assistant' : 'user',
+                content: msg.content
             }));
 
-            const response = await this.geminiService.sendMessage(
+            const response = await this.groqService.sendMessage(
                 engagementPrompt,
                 scammerMessage,
                 formattedHistory

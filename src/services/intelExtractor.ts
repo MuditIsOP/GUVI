@@ -1,9 +1,9 @@
 import { ExtractedIntelligence } from '../types/index.js';
-import { GeminiService } from './geminiService.js';
+import { GroqService } from './groqService.js';
 import { logger } from '../utils/logger.js';
 
 export class IntelligenceExtractor {
-    private geminiService: GeminiService;
+    private groqService: GroqService;
 
     // Comprehensive regex patterns for intelligence extraction
     private patterns = {
@@ -36,7 +36,7 @@ export class IntelligenceExtractor {
     };
 
     constructor() {
-        this.geminiService = new GeminiService();
+        this.groqService = new GroqService();
     }
 
     extractIntelligence(
@@ -107,7 +107,7 @@ Text: "${text}"
 
 Return empty arrays if nothing found. No explanations.`;
 
-            const response = await this.geminiService.sendSimpleMessage(prompt);
+            const response = await this.groqService.sendSimpleMessage(prompt);
 
             // Parse AI response
             const jsonMatch = response.replace(/```json\s*/gi, '').replace(/```\s*/g, '').match(/\{[\s\S]*\}/);
