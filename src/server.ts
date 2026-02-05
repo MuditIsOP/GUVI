@@ -85,12 +85,13 @@ app.use((_req: Request, res: Response) => {
     });
 });
 
-// Start server
-const server = app.listen(config.port, () => {
-    logger.info(`🚀 Agentic Honey-Pot API running on port ${config.port}`);
+// Start server - Railway requires binding to 0.0.0.0
+const PORT = process.env.PORT || 3000;
+const server = app.listen(Number(PORT), '0.0.0.0', () => {
+    logger.info(`🚀 Agentic Honey-Pot API running on port ${PORT}`);
     logger.info(`📊 Environment: ${config.nodeEnv}`);
-    logger.info(`✅ Health check: http://localhost:${config.port}/health`);
-    logger.info(`🔐 API endpoint: http://localhost:${config.port}/api/message`);
+    logger.info(`✅ Health check: http://localhost:${PORT}/health`);
+    logger.info(`🔐 API endpoint: http://localhost:${PORT}/api/message`);
     logger.info(`⚡ Rate limit: ${config.rateLimitMaxRequests} requests per ${config.rateLimitWindowMs / 1000}s`);
 });
 
