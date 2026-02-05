@@ -8,7 +8,8 @@ import { logger } from '../utils/logger.js';
 
 const router = Router();
 
-router.post('/message', async (req: Request, res: Response): Promise<void> => {
+// Message handler function - shared between / and /message
+const handleMessage = async (req: Request, res: Response): Promise<void> => {
     const startTime = Date.now();
 
     try {
@@ -109,8 +110,11 @@ router.post('/message', async (req: Request, res: Response): Promise<void> => {
             message: 'Failed to process message'
         });
     }
-});
+};
 
+// Register handler at both / and /message for hackathon compatibility
+router.post('/', handleMessage);
+router.post('/message', handleMessage);
 // Get conversation status
 router.get('/conversation/:id', (req: Request, res: Response): void => {
     const { id } = req.params;
