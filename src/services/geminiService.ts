@@ -16,7 +16,7 @@ export class GeminiService {
 
     private getModel(systemInstruction?: string) {
         return this.genAI.getGenerativeModel({
-            model: 'gemini-1.5-flash',
+            model: 'gemini-2.5-flash-lite',
             systemInstruction: systemInstruction ? {
                 role: 'system',
                 parts: [{ text: systemInstruction }]
