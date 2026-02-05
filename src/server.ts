@@ -49,7 +49,7 @@ app.get('/health', (_req: Request, res: Response) => {
     });
 });
 
-// Root endpoint
+// Root endpoint - GET
 app.get('/', (_req: Request, res: Response) => {
     res.json({
         service: 'Agentic Honey-Pot API',
@@ -57,12 +57,16 @@ app.get('/', (_req: Request, res: Response) => {
         description: 'AI-powered scam detection and engagement system',
         endpoints: {
             health: 'GET /health',
-            message: 'POST /api/message',
+            message: 'POST / or POST /api/message',
             conversation: 'GET /api/conversation/:id',
             stats: 'GET /api/stats'
         }
     });
 });
+
+// Root endpoint - POST (for hackathon compatibility)
+// Apply auth and validation, then forward to message handler
+app.post('/', authenticateAPIKey, validateMessageRequest);
 
 // Protected API routes
 // Apply authentication to all /api routes
@@ -71,7 +75,8 @@ app.use('/api', authenticateAPIKey);
 // Apply validation only to POST /api/message
 app.post('/api/message', validateMessageRequest);
 
-// Mount the router
+// Mount the router at both root and /api
+app.use('/', messageRouter);
 app.use('/api', messageRouter);
 
 // Global error handler
