@@ -14,7 +14,7 @@ export class GeminiService {
     constructor() {
         this.genAI = new GoogleGenerativeAI(config.geminiApiKey);
         this.model = this.genAI.getGenerativeModel({
-            model: 'gemini-3.0-flash',
+            model: 'gemini-1.5-flash',
             safetySettings: [
                 {
                     category: HarmCategory.HARM_CATEGORY_HARASSMENT,
@@ -61,7 +61,10 @@ export class GeminiService {
                 // Start chat with system instruction
                 const chat = this.model.startChat({
                     history: conversationHistory,
-                    systemInstruction: systemPrompt,
+                    systemInstruction: {
+                        role: 'system',
+                        parts: [{ text: systemPrompt }]
+                    },
                 });
 
                 const result = await chat.sendMessage(userMessage);
