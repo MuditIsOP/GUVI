@@ -9,12 +9,18 @@ export interface ChatMessage {
 
 export class GeminiService {
     private genAI: GoogleGenerativeAI;
-    private model: any;
 
     constructor() {
         this.genAI = new GoogleGenerativeAI(config.geminiApiKey);
-        this.model = this.genAI.getGenerativeModel({
-            model: 'gemini-pro',
+    }
+
+    private getModel(systemInstruction?: string) {
+        return this.genAI.getGenerativeModel({
+            model: 'gemini-1.5-flash',
+            systemInstruction: systemInstruction ? {
+                role: 'system',
+                parts: [{ text: systemInstruction }]
+            } : undefined,
             safetySettings: [
                 {
                     category: HarmCategory.HARM_CATEGORY_HARASSMENT,
@@ -54,17 +60,17 @@ export class GeminiService {
             try {
                 logger.debug('Sending message to Gemini', {
                     attempt,
+                    model: 'gemini-1.5-flash',
                     messageLength: userMessage.length,
                     historyLength: conversationHistory.length
                 });
 
-                // Start chat with system instruction
-                const chat = this.model.startChat({
+                // Get model instance with specific system prompt
+                const model = this.getModel(systemPrompt);
+
+                // Start chat
+                const chat = model.startChat({
                     history: conversationHistory,
-                    systemInstruction: {
-                        role: 'system',
-                        parts: [{ text: systemPrompt }]
-                    },
                 });
 
                 const result = await chat.sendMessage(userMessage);
@@ -98,7 +104,9 @@ export class GeminiService {
 
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
             try {
-                const result = await this.model.generateContent(prompt);
+                // Use default model without specific system instruction
+                const model = this.getModel();
+                const result = await model.generateContent(prompt);
                 const response = result.response;
                 return response.text();
             } catch (error: any) {
